@@ -4,8 +4,8 @@ from .models import Employee
 # Create your views here.
 
 def home(request):
-    Employees = Employee.objects.all()
-    return render(request, 'home.html', {'Employees': Employees})
+    employees = Employee.objects.all()
+    return render(request, 'home.html', {'Employees': employees})
 
 def create_view(request):
     return render(request, "create.html")
@@ -20,3 +20,24 @@ def create_emp(request):
             Employee.objects.create(emp_id=emp_id, emp_name=emp_name, emp_dept=emp_dept)
         return redirect("/")
     return render(request, "create.html")
+
+def update_view(request, id):
+    employee = get_object_or_404(Employee, id=id)
+    return render(request, "update.html", {"Employee": employee})
+
+
+def update_emp(request, id):
+    employee = get_object_or_404(Employee, id=id)
+
+    if request.method == "POST":
+        employee.emp_id = request.POST.get("emp_id")
+        employee.emp_name = request.POST.get("emp_name")
+        employee.emp_dept= request.POST.get("emp_dept")
+        employee.save()
+        return redirect("/")
+    return render(request, "update.html", {"Employee": employee})
+
+def delete(request, id):
+    employee = get_object_or_404(Employee, id=id)
+    employee.delete()
+    return redirect("/")
